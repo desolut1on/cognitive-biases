@@ -1,7 +1,9 @@
 import { useParams, useNavigate } from "react-router-dom"
 import biases from "../data/biases"
+import { useState } from "react"
 
 function BiasPage() {
+  const [currentQuestionIndex, setCurrentQuestionIndex] = useState(0)
   const navigate = useNavigate()
   const { id } = useParams()
   const biasId = Number(id)
@@ -11,17 +13,24 @@ function BiasPage() {
     return <div className="p-4 text-center text-red-500">Искажение не найдено</div>
   }
 
+  const [userAnswers, setUserAnswers] = useState(Array(bias.questions.length).fill(null))
+  const handleAnswerChange = (questionIndex, value) => {
+    const newAnswers = [...userAnswers]
+    newAnswers[questionIndex] = value
+    setUserAnswers(newAnswers)
+  }
+
   return (
     <div className="min-h-screen bg-gray-50">
-      {/* Кнопка назад в левом верхнем углу */}
+      {/* Кнопка назад */}
       <div className="bg-white border-b border-gray-200 sticky top-0 z-10">
         <div className="max-w-4xl mx-auto px-4 py-4">
-        <button
-  onClick={() => navigate(-1)}
-  className="flex items-center gap-2 text-gray-600 hover:text-gray-900 transition-colors cursor-pointer"
->
-  ← Назад
-</button>
+          <button
+            onClick={() => navigate(-1)}
+            className="flex items-center gap-2 text-gray-600 hover:text-gray-900 transition-colors cursor-pointer"
+          >
+            ← Назад
+          </button>
         </div>
       </div>
 
@@ -47,7 +56,7 @@ function BiasPage() {
           </div>
         </section>
 
-        {/* Список искажений в модуле */}
+        {/* Список искажений */}
         {bias.distortions && bias.distortions.length > 0 && (
           <section className="mb-10">
             <h2 className="text-xl font-semibold text-gray-800 mb-4">Список искажений</h2>
@@ -62,9 +71,14 @@ function BiasPage() {
           </section>
         )}
 
-        {/* Здесь позже будут вопросы теста */}
-        <div className="mt-8 pt-6 border-t border-gray-200">
-          <p className="text-gray-500 text-center">Тест будет доступен в следующей версии</p>
+        {/* Кнопка перехода к тесту */}
+        <div className="mt-8 pt-6 border-t border-gray-200 text-center">
+          <button
+            onClick={() => navigate(`/bias/${bias.id}/test`)}
+            className="bg-blue-600 text-white px-6 py-2 rounded-lg hover:bg-blue-700 transition-colors"
+          >
+            Перейти к тестированию
+          </button>
         </div>
       </div>
     </div>

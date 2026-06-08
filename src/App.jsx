@@ -1,6 +1,7 @@
 import biases from "./data/biases"
 import { Routes, Route, Link } from 'react-router-dom'
 import BiasPage from "./pages/BiasPage"
+import BiasTest from "./pages/BiasTest"
 
 function App() {
   return (
@@ -37,6 +38,7 @@ function App() {
         </div>
       } />
       <Route path="/bias/:id" element={<BiasPage />} />
+      <Route path="/bias/:id/test" element = {<BiasTest />} />
     </Routes>
   )
 }
