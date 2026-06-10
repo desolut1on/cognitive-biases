@@ -1,6 +1,7 @@
 import { useParams, useNavigate } from "react-router-dom"
 import biases from "../data/biases"
 import { useState } from "react"
+import Modal from "../components/Modal"
 
 function BiasTest() {
     
@@ -10,6 +11,10 @@ function BiasTest() {
   const bias = biases.find(b => b.id === biasId)
   const [userAnswers, setUserAnswers] = useState(Array(bias.questions.length).fill(null))
   const [currentQuestionIndex, setCurrentQuestionIndex] = useState(0)
+  const [showResult, setShowResult] = useState(false)
+  const [resultMessage,setResultMessage] = useState()
+  const [showError,setShowError] = useState(false)
+  const [errorMessage,setErrorMessage] = useState()
 
   if (!bias) {
     return <div className="p-4 text-center text-red-500">Модуль не найден</div>
@@ -26,14 +31,16 @@ function BiasTest() {
   const handleSubmit = () => {
     const allAnswered = userAnswers.every (answer => answer !== null)
     if (!allAnswered) {
-        alert ('Ответьте на все вопросы')
+      setShowError(true)
+        setErrorMessage('Ответьте на вопрос')
         return
     }
     let correctCount = 0
     bias.questions.forEach((question, idx) => {
       if (userAnswers[idx] === question.correct) correctCount++
     })
-    alert(`Вы ответили правильно на ${correctCount} из ${bias.questions.length} вопросов`)
+    setResultMessage(`Вы ответили правильно на ${correctCount} из ${bias.questions.length} вопросов`)
+    setShowResult(true)
   }
 
 
@@ -41,7 +48,8 @@ function BiasTest() {
     if (userAnswers[currentQuestionIndex] !== null) {
         setCurrentQuestionIndex (currentQuestionIndex + 1)
       } else {
-        alert("Ответьте на вопрос")
+        setShowError(true)
+        setErrorMessage("Ответьте на вопрос")
       }
     
   }
@@ -111,6 +119,24 @@ function BiasTest() {
             Проверить ответы
           </button>
             )}
+            {showResult&&(
+             <Modal
+             isOpen={showResult}
+             onClose={()=> navigate(-1)}
+             title ="Результат"
+             message={resultMessage}
+             type="success"
+             />
+            )}
+ {showError && (
+  <Modal
+    isOpen={showError}
+    onClose={() => setShowError(false)}
+    title="Ошибка"
+    message={errorMessage}
+    type="error"
+  />
+)}
         </div>
       </div>
     </div>
