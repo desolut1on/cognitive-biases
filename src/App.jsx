@@ -4,6 +4,8 @@ import BiasPage from "./pages/BiasPage"
 import BiasTest from "./pages/BiasTest"
 
 function App() {
+  const completedModules = JSON.parse(localStorage.getItem('completedModules') || '[]')
+
   return (
     <Routes>
       <Route path="/" element={
@@ -24,12 +26,17 @@ function App() {
                   <p className="text-gray-600 mb-4">{bias.shortDesc}</p>
                   <div className="flex justify-between items-center">
                     <span className="text-sm text-gray-500">{bias.count} когнитивных искажений</span>
-                    <Link
-                      to={`/bias/${bias.id}`}
-                      className="px-6 py-2.5 bg-blue-600 text-white rounded-md hover:bg-blue-700 transition-colors"
-                    >
-                      Начать
-                    </Link>
+                    <div className="flex items-center gap-3">
+                      {completedModules.includes(bias.id) && (
+                        <span className="text-green-600 text-sm font-medium">✅ Пройден</span>
+                      )}
+                      <Link
+                        to={`/bias/${bias.id}`}
+                        className="px-6 py-2.5 bg-blue-600 text-white rounded-md hover:bg-blue-700 transition-colors"
+                      >
+                        Начать
+                      </Link>
+                    </div>
                   </div>
                 </div>
               </div>
@@ -38,7 +45,7 @@ function App() {
         </div>
       } />
       <Route path="/bias/:id" element={<BiasPage />} />
-      <Route path="/bias/:id/test" element = {<BiasTest />} />
+      <Route path="/bias/:id/test" element={<BiasTest />} />
     </Routes>
   )
 }

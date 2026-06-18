@@ -4,7 +4,6 @@ import { useState } from "react"
 import Modal from "../components/Modal"
 
 function BiasTest() {
-    
   const navigate = useNavigate()
   const { id } = useParams()
   const biasId = Number(id)
@@ -12,15 +11,15 @@ function BiasTest() {
   const [userAnswers, setUserAnswers] = useState(Array(bias.questions.length).fill(null))
   const [currentQuestionIndex, setCurrentQuestionIndex] = useState(0)
   const [showResult, setShowResult] = useState(false)
-  const [resultMessage,setResultMessage] = useState()
-  const [showError,setShowError] = useState(false)
-  const [errorMessage,setErrorMessage] = useState()
+  const [resultMessage, setResultMessage] = useState("")
+  const [showWarning, setShowWarning] = useState(false)
+  const [warningMessage, setWarningMessage] = useState("")
+  const [showError, setShowError] = useState(false)
+  const [errorMessage, setErrorMessage] = useState("")
 
   if (!bias) {
     return <div className="p-4 text-center text-red-500">Модуль не найден</div>
   }
-
-
 
   const handleAnswerChange = (questionIndex, value) => {
     const newAnswers = [...userAnswers]
@@ -28,34 +27,50 @@ function BiasTest() {
     setUserAnswers(newAnswers)
   }
 
+  const resetTest = () => {
+    setUserAnswers(Array(bias.questions.length).fill(null))
+    setCurrentQuestionIndex(0)
+    setShowError(false)
+  }
+
   const handleSubmit = () => {
-    const allAnswered = userAnswers.every (answer => answer !== null)
+    const allAnswered = userAnswers.every(answer => answer !== null)
     if (!allAnswered) {
-      setShowError(true)
-        setErrorMessage('Ответьте на вопрос')
-        return
+      setWarningMessage("Ответьте на все вопросы")
+      setShowWarning(true)
+      return
     }
+
     let correctCount = 0
     bias.questions.forEach((question, idx) => {
       if (userAnswers[idx] === question.correct) correctCount++
     })
-    setResultMessage(`Вы ответили правильно на ${correctCount} из ${bias.questions.length} вопросов`)
-    setShowResult(true)
-  }
 
+    if (correctCount >= 3) {
+      const completedModules = JSON.parse(localStorage.getItem('completedModules') || '[]')
+      if (!completedModules.includes(bias.id)) {
+        const updated = [...completedModules, bias.id]
+        localStorage.setItem('completedModules', JSON.stringify(updated))
+      }
+      setResultMessage(`Вы ответили правильно на ${correctCount} из ${bias.questions.length} вопросов`)
+      setShowResult(true)
+    } else {
+      setErrorMessage(`Вы ответили на ${correctCount} из ${bias.questions.length} вопросов, пройдите тест еще раз`)
+      setShowError(true)
+    }
+  }
 
   const handleNext = () => {
     if (userAnswers[currentQuestionIndex] !== null) {
-        setCurrentQuestionIndex (currentQuestionIndex + 1)
-      } else {
-        setShowError(true)
-        setErrorMessage("Ответьте на вопрос")
-      }
-    
+      setCurrentQuestionIndex(currentQuestionIndex + 1)
+    } else {
+      setWarningMessage("Ответьте на вопрос")
+      setShowWarning(true)
+    }
   }
+
   return (
     <div className="min-h-screen bg-gray-50">
-      {/* Шапка с кнопкой назад */}
       <div className="bg-white border-b border-gray-200 sticky top-0 z-10">
         <div className="max-w-4xl mx-auto px-4 py-4">
           <button
@@ -71,7 +86,6 @@ function BiasTest() {
         <h1 className="text-3xl font-bold text-gray-900 mb-6">Тест: {bias.title}</h1>
 
         {bias.questions[currentQuestionIndex] && (
-
           <div className="mb-8 p-6 bg-white rounded-lg shadow">
             <p className="text-lg font-medium mb-4">{bias.questions[currentQuestionIndex].text}</p>
             <div className="flex gap-4">
@@ -100,43 +114,55 @@ function BiasTest() {
         )}
 
         <div className="mt-8 text-center">
-            {currentQuestionIndex < bias.questions.length - 1 && (
-                <button
-                onClick={handleNext}
-             className="bg-blue-600 text-white px-8 py-3 rounded-lg hover:bg-blue-700 transition-colors text-lg"
-                >
-                    Далее
-                </button>
-            )}
+          {currentQuestionIndex < bias.questions.length - 1 && (
+            <button
+              onClick={handleNext}
+              className="bg-blue-600 text-white px-8 py-3 rounded-lg hover:bg-blue-700 transition-colors text-lg"
+            >
+              Далее
+            </button>
+          )}
 
-            {currentQuestionIndex === bias.questions.length -1 && (
+          {currentQuestionIndex === bias.questions.length - 1 && (
+            <button
+              onClick={handleSubmit}
+              className="bg-green-600 text-white px-8 py-3 rounded-lg hover:bg-green-700 transition-colors text-lg"
+            >
+              Проверить ответы
+            </button>
+          )}
 
-          
-          <button
-            onClick={handleSubmit}
-            className="bg-green-600 text-white px-8 py-3 rounded-lg hover:bg-green-700 transition-colors text-lg"
-          >
-            Проверить ответы
-          </button>
-            )}
-            {showResult&&(
-             <Modal
-             isOpen={showResult}
-             onClose={()=> navigate(-1)}
-             title ="Результат"
-             message={resultMessage}
-             type="success"
-             />
-            )}
- {showError && (
-  <Modal
-    isOpen={showError}
-    onClose={() => setShowError(false)}
-    title="Ошибка"
-    message={errorMessage}
-    type="error"
-  />
-)}
+          {showResult && (
+            <Modal
+              isOpen={showResult}
+              onClose={() => navigate(-1)}
+              title="Результат"
+              message={resultMessage}
+              type="success"
+            />
+          )}
+
+          {showWarning && (
+            <Modal
+              isOpen={showWarning}
+              onClose={() => setShowWarning(false)}
+              title="Внимание"
+              message={warningMessage}
+              type="info"
+              buttonText="Ок"
+            />
+          )}
+
+          {showError && (
+            <Modal
+              isOpen={showError}
+              onClose={resetTest}
+              title="Ошибка"
+              message={errorMessage}
+              type="error"
+              buttonText="Пройти еще раз"
+            />
+          )}
         </div>
       </div>
     </div>
