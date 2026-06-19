@@ -2,9 +2,11 @@ import biases from "./data/biases"
 import { Routes, Route, Link } from 'react-router-dom'
 import BiasPage from "./pages/BiasPage"
 import BiasTest from "./pages/BiasTest"
+import ResultsPage from "./pages/ResultsPage"
 
 function App() {
   const completedModules = JSON.parse(localStorage.getItem('completedModules') || '[]')
+
 
   return (
     <Routes>
@@ -13,11 +15,12 @@ function App() {
           {/* Заголовок и подзаголовок */}
           <h1 className="text-3xl font-bold text-gray-900 mb-2">Обучающие модули</h1>
           <p className="text-gray-600 mb-8">Изучайте когнитивные искажения шаг за шагом</p>
+          <p className="text-sm font-semibold text-gray-700 mb-6">Пройдено {completedModules.length} из {biases.length} модулей</p>
 
           {/* Сетка карточек */}
           <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
             {biases.map(bias => (
-              <div key={bias.id} className="bg-white rounded-lg shadow-md overflow-hidden border border-gray-100">
+              <div key={bias.id} className="bg-white rounded-lg shadow-md overflow-hidden border border-gray-100 animate-fadeInUp transition-transform hover:translate-y-1">
                 <div className="p-8">
                   <div className="flex justify-between items-start mb-2">
                     <h2 className="text-2xl font-semibold text-gray-900">{bias.title}</h2>
@@ -46,6 +49,7 @@ function App() {
       } />
       <Route path="/bias/:id" element={<BiasPage />} />
       <Route path="/bias/:id/test" element={<BiasTest />} />
+      <Route path="/bias/:id/results" element={<ResultsPage />} />
     </Routes>
   )
 }

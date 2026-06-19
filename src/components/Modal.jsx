@@ -1,4 +1,4 @@
-const Modal = ({ isOpen, onClose, title, message, type = 'info', buttonText = 'Ок' }) => {
+const Modal = ({ isOpen, onClose, title, message, type = 'info', buttonText = 'Ок', errors = []}) => {
   if (!isOpen) return null;
 
   const colors = {
@@ -31,7 +31,22 @@ const Modal = ({ isOpen, onClose, title, message, type = 'info', buttonText = '�
         
         <p className="text-gray-700 text-base leading-relaxed tracking-wide mb-4">
           {message}
-        </p>
+          </p>
+          {errors.length > 0 && (
+            <div className="mt-4 border-t border-gray-200 pt-4">
+              <p className="font-semibold text-gray-800 mb-2">Ошибки:</p>
+              <ul className="space-y-3">
+                {errors.map((error,idx)=> (
+                  <li key={idx} className="text-sm text-gray-700">
+                    <p className="font-medium">{error.question}</p>
+                    <p>Ваш ответ: <span className="text-red-600">{error.userAnswer}</span></p>
+                    <p>Правильный ответ: <span className="text-green-600">{error.correctAnswer}</span></p>
+                  </li>
+                ))}
+              </ul>
+            </div>
+          )}
+       
         
         <div className="flex justify-end">
           <button

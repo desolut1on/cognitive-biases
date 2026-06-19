@@ -10,8 +10,6 @@ function BiasTest() {
   const bias = biases.find(b => b.id === biasId)
   const [userAnswers, setUserAnswers] = useState(Array(bias.questions.length).fill(null))
   const [currentQuestionIndex, setCurrentQuestionIndex] = useState(0)
-  const [showResult, setShowResult] = useState(false)
-  const [resultMessage, setResultMessage] = useState("")
   const [showWarning, setShowWarning] = useState(false)
   const [warningMessage, setWarningMessage] = useState("")
   const [showError, setShowError] = useState(false)
@@ -46,18 +44,32 @@ function BiasTest() {
       if (userAnswers[idx] === question.correct) correctCount++
     })
 
+    const allDetails = bias.questions.map((question, idx) => ({
+      question: question.text,
+      userAnswer: userAnswers[idx] !== null ? (userAnswers[idx] ? "Да" : "Нет") : "Не отвечен",
+      correctAnswer: question.correct ? "Да" : "Нет",
+      isCorrect: userAnswers[idx] === question.correct
+    }))
+
+    // Сохраняем прогресс только если >= 3 правильных
     if (correctCount >= 3) {
       const completedModules = JSON.parse(localStorage.getItem('completedModules') || '[]')
       if (!completedModules.includes(bias.id)) {
         const updated = [...completedModules, bias.id]
         localStorage.setItem('completedModules', JSON.stringify(updated))
       }
-      setResultMessage(`Вы ответили правильно на ${correctCount} из ${bias.questions.length} вопросов`)
-      setShowResult(true)
-    } else {
-      setErrorMessage(`Вы ответили на ${correctCount} из ${bias.questions.length} вопросов, пройдите тест еще раз`)
-      setShowError(true)
     }
+
+    // ВСЕГДА переходим на страницу результатов
+    navigate(`/bias/${bias.id}/results`, {
+      state: {
+        bias,
+        userAnswers,
+        correctCount,
+        questionsDetails: allDetails,
+        isPassed: correctCount >= 3
+      }
+    })
   }
 
   const handleNext = () => {
@@ -130,16 +142,6 @@ function BiasTest() {
             >
               Проверить ответы
             </button>
-          )}
-
-          {showResult && (
-            <Modal
-              isOpen={showResult}
-              onClose={() => navigate(-1)}
-              title="Результат"
-              message={resultMessage}
-              type="success"
-            />
           )}
 
           {showWarning && (
