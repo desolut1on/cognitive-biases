@@ -31,29 +31,41 @@
 1. Клонируй репозиторий:
    ```bash
    git clone https://github.com/desolut1on/cognitive-biases.git
-Перейди в папку проекта:
+   ```
 
-bash
-cd cognitive-biases
-Установи зависимости:
+2. Перейди в папку проекта:
+   ```bash
+   cd cognitive-biases
+   ```
 
-bash
-npm install
-Запусти локальный сервер:
+3. Установи зависимости:
+   ```bash
+   npm install
+   ```
 
-bash
-npm run dev
-Открой в браузере:
+4. Запусти локальный сервер:
+   ```bash
+   npm run dev
+   ```
 
-text
-http://localhost:5173
-Структура проекта
-text
+5. Открой в браузере:
+   ```
+   http://localhost:5173
+   ```
+
+---
+
+## Структура проекта
+
+```text
 src/
 ├── components/          # переиспользуемые компоненты (Modal)
 ├── data/                # данные модулей и искажений
 ├── pages/               # основные страницы приложения
 ├── App.jsx              # маршруты и настройка
 └── index.css            # глобальные стили
-Автор
-desolut1on
+```
+
+## Автор
+
+**desolut1on**
