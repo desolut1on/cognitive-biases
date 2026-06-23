@@ -1,16 +1,40 @@
-# React + Vite
+Когнитивные искажения — обучающий проект
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+Интерактивное веб-приложение для изучения когнитивных искажений: теория, примеры, тесты и отслеживание прогресса.
 
-Currently, two official plugins are available:
+О проекте
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react) uses [Oxc](https://oxc.rs)
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react-swc) uses [SWC](https://swc.rs/)
+Проект создан для знакомства с основными когнитивными искажениями. Он содержит список модулей с кратким описанием и временем изучения, страницу модуля с теорией, примерами и списком искажений, тест для проверки знаний с пошаговой проверкой и подсчётом правильных ответов, страницу результатов с разбором ошибок и правильными ответами, прогресс-бар и счётчик пройденных модулей, а также сохранение прогресса в localStorage.
 
-## React Compiler
+Технологии
 
-The React Compiler is not enabled on this template because of its impact on dev & build performances. To add it, see [this documentation](https://react.dev/learn/react-compiler/installation).
+React, React Router для навигации между страницами, Tailwind CSS для стилизации и адаптива, localStorage для хранения прогресса.
 
-## Expanding the ESLint configuration
+Установка и запуск
 
-If you are developing a production application, we recommend using TypeScript with type-aware lint rules enabled. Check out the [TS template](https://github.com/vitejs/vite/tree/main/packages/create-vite/template-react-ts) for information on how to integrate TypeScript and [`typescript-eslint`](https://typescript-eslint.io) in your project.
+Клонируй репозиторий:
+git clone https://github.com/desolut1on/cognitive-biases.git
+
+Перейди в папку проекта:
+cd cognitive-biases
+
+Установи зависимости:
+npm install
+
+Запусти локальный сервер:
+npm run dev
+
+Открой в браузере:
+http://localhost:5173
+
+Структура проекта
+
+src/components/ — переиспользуемые компоненты (Modal)
+src/data/ — данные модулей и искажений
+src/pages/ — основные страницы приложения
+src/App.jsx — маршруты и настройка
+src/index.css — глобальные стили
+
+Автор
+
+desolut1on
